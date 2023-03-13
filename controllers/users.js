@@ -10,9 +10,7 @@ const createUser = (req, res) => {
           .status(400)
           .send({ message: `Переданы некорректные данные ${error}` });
       } else {
-        res
-          .status(500)
-          .send({ message: `Ошибка сервера ${error}` });
+        res.status(500).send({ message: `Ошибка сервера ${error}` });
       }
     });
 };
@@ -21,22 +19,25 @@ const getUser = (req, res) => {
   return user
     .findById({ _id: req.params.id })
     .orFail(() => {
-      throw new Error('Пользователь не найден')
+      throw new Error("UserNotFound");
     })
-    .then((usr) => res.status(201).send(usr))
+    .then((usr) => res.status(200).send(usr))
     .catch((error) => {
       if (error.name === "UserNotFound") {
-        res
-          .status(404)
-          .send({ message: `Пользователь не найден ${error}` });
+        res.status(404).send({ message: `Пользователь не найден ${error}` });
       } else {
-        res
-          .status(500)
-          .send({ message: `Ошибка сервера ${error}` });
+        res.status(500).send({ message: `Ошибка сервера ${error}` });
       }
-    })
+    });
 };
 
-const getUsers = (req, res) => {};
+const getUsers = (req, res) => {
+  return user
+    .find({})
+    .then((usrs) => res.status(200).send(usrs))
+    .catch((error) => {
+      res.status(500).send({ message: `Ошибка сервера ${error}` });
+    });
+};
 
 module.exports = { createUser, getUser, getUsers };
