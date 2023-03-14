@@ -40,4 +40,38 @@ const getUsers = (req, res) => {
     });
 };
 
-module.exports = { createUser, getUser, getUsers };
+const updateUser = (req, res) => {
+  const { name, about } = req.body;
+  return user
+    .findByIdAndUpdate(req.user._id, { name, about })
+    .orFail(() => {
+      throw new Error("UserNotFound");
+    })
+    .then((usr) => res.send({ data: usr }))
+    .catch((error) => {
+      if (error.name === "UserNotFound") {
+        res.status(404).send({ message: `Пользователь не найден ${error}` });
+      } else {
+        res.status(500).send({ message: `Ошибка сервера ${error}` });
+      }
+    });
+};
+
+const updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+  return user
+    .findByIdAndUpdate(req.user._id, { avatar })
+    .orFail(() => {
+      throw new Error("UserNotFound");
+    })
+    .then((usr) => res.send({ data: usr }))
+    .catch((error) => {
+      if (error.name === "UserNotFound") {
+        res.status(404).send({ message: `Пользователь не найден ${error}` });
+      } else {
+        res.status(500).send({ message: `Ошибка сервера ${error}` });
+      }
+    });
+};
+
+module.exports = { createUser, getUser, getUsers, updateUser, updateAvatar };

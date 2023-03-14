@@ -1,8 +1,9 @@
 const card = require("../models/card");
 
 const createCard = (req, res) => {
+  const { name, link } = req.body;
   return card
-    .create(req.body)
+    .create({ name, link, owner: req.user._id })
     .then((crd) => res.status(201).send(crd))
     .catch((error) => {
       if (error.name === "ValidationError") {
@@ -17,11 +18,11 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   return card
-    .findById({ _id: req.params.id })
+    .findByIdAndRemove(req.params.cardId)
     .orFail(() => {
       throw new Error("CardNotFound");
     })
-    .then((usr) => res.status(200).send(usr))
+    .then((crd) => res.send({ data: crd }))
     .catch((error) => {
       if (error.name === "CardNotFound") {
         res.status(404).send({ message: `Карточка не найдена ${error}` });
@@ -40,4 +41,20 @@ const getCards = (req, res) => {
     });
 };
 
-module.exports = { createCard, deleteCard, getCards };
+const likeCard = (req, res) => {
+  return card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  );
+};
+
+const dislikeCard = (req, res) => {
+  return card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  );
+};
+
+module.exports = { createCard, deleteCard, getCards, likeCard, dislikeCard };
