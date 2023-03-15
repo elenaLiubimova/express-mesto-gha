@@ -8,25 +8,27 @@ const createUser = (req, res) => {
       if (error.name === "ValidationError") {
         res
           .status(400)
-          .send({ message: `Переданы некорректные данные ${error}` });
+          .send({ message: "Переданы некорректные данные при создании пользователя" });
       } else {
-        res.status(500).send({ message: `Ошибка сервера ${error}` });
+        res.status(500).send({ message: "Ошибка сервера" });
       }
     });
 };
 
 const getUser = (req, res) => {
   return user
-    .findById({ _id: req.params.id })
-    .orFail(() => {
-      throw new Error("UserNotFound");
+    .findById(req.user._id)
+    .then((usr) => {
+      if (!usr) {
+        throw new Error("UserNotFound");
+      }
     })
-    .then((usr) => res.status(200).send(usr))
+    .then((usr) => res.send({ data: usr }))
     .catch((error) => {
       if (error.name === "UserNotFound") {
-        res.status(404).send({ message: `Пользователь не найден ${error}` });
+        res.status(404).send({ message: "Пользователь не найден" });
       } else {
-        res.status(500).send({ message: `Ошибка сервера ${error}` });
+        res.status(500).send({ message: "Ошибка сервера" });
       }
     });
 };
@@ -36,7 +38,7 @@ const getUsers = (req, res) => {
     .find({})
     .then((usrs) => res.status(200).send(usrs))
     .catch((error) => {
-      res.status(500).send({ message: `Ошибка сервера ${error}` });
+      res.status(500).send({ message: "Ошибка сервера" });
     });
 };
 
