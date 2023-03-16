@@ -1,34 +1,41 @@
 const user = require("../models/user");
+const {
+  notFoundError,
+  badRequestError,
+  internalServerError,
+  createdStatus,
+  okStatus,
+} = require("../utils/constants");
 
 const createUser = (req, res) => {
   return user
     .create(req.body)
-    .then((usr) => res.status(201).send(usr))
+    .then((usr) => res.status(createdStatus).send(usr))
     .catch((error) => {
       if (error.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Переданы некорректные данные при создании пользователя" });
+        res.status(badRequestError).send({
+          message: "Переданы некорректные данные при создании пользователя",
+        });
       } else {
-        res.status(500).send({ message: "Ошибка сервера" });
+        res.status(internalServerError).send({ message: "Ошибка сервера" });
       }
     });
 };
 
 const getUser = (req, res) => {
   return user
-    .findById(req.user._id)
+    .findById(req.params.userId)
     .then((usr) => {
       if (!usr) {
         throw new Error("UserNotFound");
       }
+      res.send({ data: usr });
     })
-    .then((usr) => res.send({ data: usr }))
     .catch((error) => {
       if (error.name === "UserNotFound") {
-        res.status(404).send({ message: "Пользователь не найден" });
+        res.status(notFoundError).send({ message: "Пользователь не найден" });
       } else {
-        res.status(500).send({ message: "Ошибка сервера" });
+        res.status(internalServerError).send({ message: "Ошибка сервера" });
       }
     });
 };
@@ -36,9 +43,9 @@ const getUser = (req, res) => {
 const getUsers = (req, res) => {
   return user
     .find({})
-    .then((usrs) => res.status(200).send(usrs))
+    .then((usrs) => res.status(okStatus).send(usrs))
     .catch((error) => {
-      res.status(500).send({ message: "Ошибка сервера" });
+      res.status(internalServerError).send({ message: "Ошибка сервера" });
     });
 };
 
@@ -52,9 +59,11 @@ const updateUser = (req, res) => {
     .then((usr) => res.send({ data: usr }))
     .catch((error) => {
       if (error.name === "UserNotFound") {
-        res.status(404).send({ message: `Пользователь не найден ${error}` });
+        res.status(404).send({ message: "Пользователь не найден" });
+      } else if (error.name === "CastError") {
+        res.status(400).send({ message: "Передан некорретный id" });
       } else {
-        res.status(500).send({ message: `Ошибка сервера ${error}` });
+        res.status(500).send({ message: "Ошибка сервера" });
       }
     });
 };
@@ -69,9 +78,13 @@ const updateAvatar = (req, res) => {
     .then((usr) => res.send({ data: usr }))
     .catch((error) => {
       if (error.name === "UserNotFound") {
-        res.status(404).send({ message: `Пользователь не найден ${error}` });
+        res.status(404).send({ message: "Пользователь не найден" });
+      } else if (error.name === "ValidationError") {
+        res
+          .status(400)
+          .send({ message: "Переданы некорретные данные" });
       } else {
-        res.status(500).send({ message: `Ошибка сервера ${error}` });
+        res.status(500).send({ message: "Ошибка сервера" });
       }
     });
 };
