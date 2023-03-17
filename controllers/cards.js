@@ -25,18 +25,20 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   return card
-    .findByIdAndRemove(req.params.cardId)
+    .findById(req.params.cardId)
     .then((crd) => {
-      if (!card) {
+      if (!crd) {
         res.status(notFoundError).send({ message: "Карточка не найдена" });
       }
-      res.send({ data: crd })
+      crd.remove().then(() => res.send({ message: "Карточка удалена" }));
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        res.status(notFoundError).send({ message: "Карточка не найдена " });
+        res
+          .status(badRequestError)
+          .send({ message: "Переданы некорректные данные" });
       } else {
-        res.status(badRequestError).send({ message: "Ошибка сервера" });
+        res.status(internalServerError).send({ message: "Ошибка сервера" });
       }
     });
 };
