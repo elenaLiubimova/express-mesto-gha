@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const usersRouter = require("./routes/users");
 const cardsRouter = require("./routes/cards");
+const { notFoundError } = require("./utils/constants");
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.use((req, res, next) => {
   app.use("/", usersRouter);
   app.use("/", cardsRouter);
   app.use('*', (req, res, next) => next(
-    new Error404("Ресурс не найден.")
+    res.status(notFoundError).send({ message: "Страница не найдена" })
   ));
   next();
 });
