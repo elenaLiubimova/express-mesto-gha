@@ -27,13 +27,13 @@ const getUser = (req, res) => {
     .findById(req.params.userId)
     .then((usr) => {
       if (!usr) {
-        throw new Error("UserNotFound");
+        res.status(notFoundError).send({ message: "Пользователь не найден" });
       }
-      res.send({ data: usr });
+      res.status(okStatus).send({ data: usr });
     })
     .catch((error) => {
-      if (error.name === "UserNotFound") {
-        res.status(notFoundError).send({ message: "Пользователь не найден" });
+      if (error.name === "CastError" || error.name === "ValidationError") {
+        res.status(badRequestError).send({ message: "Переданы некорректные данные" });
       } else {
         res.status(internalServerError).send({ message: "Ошибка сервера" });
       }
@@ -53,10 +53,12 @@ const updateUser = (req, res) => {
   const { name, about } = req.body;
   return user
     .findByIdAndUpdate(req.user._id, { name, about })
-    .orFail(() => {
-      throw new Error("UserNotFound");
+    .then((usr) => {
+      if (!usr) {
+        res.status(notFoundError).send({ message: "Пользователь не найден" });
+      }
+      res.status(okStatus).send({ data: usr });
     })
-    .then((usr) => res.send({ data: usr }))
     .catch((error) => {
       if (error.name === "UserNotFound") {
         res.status(404).send({ message: "Пользователь не найден" });
