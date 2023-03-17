@@ -25,12 +25,12 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   return card
-    .findById(req.params.cardId)
+    .findByIdAndRemove(req.params.cardId)
     .then((crd) => {
       if (!crd) {
         res.status(notFoundError).send({ message: "Карточка не найдена" });
       }
-      crd.remove().then(() => res.send({ message: "Карточка удалена" }));
+      res.send({ data: crd });
     })
     .catch((error) => {
       if (error.name === "CastError") {
