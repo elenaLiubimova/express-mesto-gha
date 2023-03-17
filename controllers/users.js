@@ -60,10 +60,8 @@ const updateUser = (req, res) => {
       res.status(okStatus).send({ data: usr });
     })
     .catch((error) => {
-      if (error.name === "UserNotFound") {
-        res.status(404).send({ message: "Пользователь не найден" });
-      } else if (error.name === "CastError") {
-        res.status(400).send({ message: "Передан некорретный id" });
+      if (error.name === "CastError" || error.name === "ValidationError") {
+        res.status(400).send({ message: "Передан некорректный id" });
       } else {
         res.status(500).send({ message: "Ошибка сервера" });
       }
