@@ -79,7 +79,7 @@ const updateUser = (req, res) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
   return user
-    .findByIdAndUpdate(req.user._id, { avatar })
+    .findByIdAndUpdate(req.user._id, { avatar }, { new: true })
     .orFail(() => {
       throw new Error("UserNotFound");
     })

@@ -10,7 +10,7 @@ const {
 const createCard = (req, res) => {
   const { name, link } = req.body;
   return card
-    .create({ name, link, owner: req.user._id }, { runValidators: true })
+    .create({ name, link, owner: req.user._id })
     .then((crd) => res.status(createdStatus).send(crd))
     .catch((error) => {
       if (error.name === "ValidationError") {
@@ -54,13 +54,13 @@ const likeCard = (req, res) => {
     )
     .then((card) => {
       if (!card) {
-        throw new Error("Карточка не найдена");
+        res.status(notFoundError).send({ message: "Карточка не найдена" });
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(badRequestError).send({ message: "Пользователь не найден" });
+        res.status(badRequestError).send({ message: "Переданы некорректные данные" });
       } else {
         res.status(internalServerError).send({ message: "Ошибка сервера" });
       }
