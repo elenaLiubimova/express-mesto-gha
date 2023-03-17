@@ -16,7 +16,9 @@ app.use((req, res, next) => {
   };
   app.use("/", usersRouter);
   app.use("/", cardsRouter);
-
+  app.use('*', (req, res, next) => next(
+    new Error404("Ресурс не найден.")
+  ));
   next();
 });
 
