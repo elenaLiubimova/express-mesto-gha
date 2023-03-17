@@ -10,7 +10,7 @@ const {
 const createCard = (req, res) => {
   const { name, link } = req.body;
   return card
-    .create({ name, link, owner: req.user._id })
+    .create({ name, link, owner: req.user._id }, { runValidators: true })
     .then((crd) => res.status(createdStatus).send(crd))
     .catch((error) => {
       if (error.name === "ValidationError") {

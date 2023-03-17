@@ -33,7 +33,9 @@ const getUser = (req, res) => {
     })
     .catch((error) => {
       if (error.name === "CastError" || error.name === "ValidationError") {
-        res.status(badRequestError).send({ message: "Переданы некорректные данные" });
+        res
+          .status(badRequestError)
+          .send({ message: "Переданы некорректные данные" });
       } else {
         res.status(internalServerError).send({ message: "Ошибка сервера" });
       }
@@ -52,7 +54,11 @@ const getUsers = (req, res) => {
 const updateUser = (req, res) => {
   const { name, about } = req.body;
   return user
-    .findByIdAndUpdate(req.user._id, { name, about })
+    .findByIdAndUpdate(
+      req.user._id,
+      { name, about },
+      { new: true, runValidators: true }
+    )
     .then((usr) => {
       if (!usr) {
         res.status(notFoundError).send({ message: "Пользователь не найден" });
@@ -61,9 +67,11 @@ const updateUser = (req, res) => {
     })
     .catch((error) => {
       if (error.name === "CastError" || error.name === "ValidationError") {
-        res.status(400).send({ message: "Передан некорректный id" });
+        res
+          .status(badRequestError)
+          .send({ message: "Переданы некорректные данные" });
       } else {
-        res.status(500).send({ message: "Ошибка сервера" });
+        res.status(internalServerError).send({ message: "Ошибка сервера" });
       }
     });
 };
@@ -80,9 +88,7 @@ const updateAvatar = (req, res) => {
       if (error.name === "UserNotFound") {
         res.status(404).send({ message: "Пользователь не найден" });
       } else if (error.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Переданы некорретные данные" });
+        res.status(400).send({ message: "Переданы некорретные данные" });
       } else {
         res.status(500).send({ message: "Ошибка сервера" });
       }
