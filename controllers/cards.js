@@ -18,7 +18,7 @@ const createCard = (req, res) => {
           message: 'Переданы некорректные данные при создании карточки',
         });
       } else {
-        res.status(internalServerError).send({ message: `Ошибка сервера: ${error}` });
+        res.status(internalServerError).send({ message: 'Ошибка сервера' });
       }
     });
 };
@@ -38,7 +38,7 @@ const deleteCard = (req, res) => card
         .status(badRequestError)
         .send({ message: 'Переданы некорректные данные' });
     } else {
-      res.status(internalServerError).send({ message: `Ошибка сервера: ${error}` });
+      res.status(internalServerError).send({ message: 'Ошибка сервера' });
     }
   });
 
@@ -46,7 +46,7 @@ const getCards = (req, res) => card
   .find({})
   .then((crds) => res.status(okStatus).send(crds))
   .catch((error) => {
-    res.status(badRequestError).send({ message: `Ошибка сервера: ${error}` });
+    res.status(badRequestError).send({ message: `Некорректные данные: ${error}` });
   });
 
 const likeCard = (req, res) => card
@@ -66,7 +66,7 @@ const likeCard = (req, res) => card
     if (error.name === 'CastError') {
       res.status(badRequestError).send({ message: 'Переданы некорректные данные' });
     } else {
-      res.status(internalServerError).send({ message: `Ошибка сервера: ${error}` });
+      res.status(internalServerError).send({ message: 'Ошибка сервера' });
     }
   });
 
@@ -87,7 +87,7 @@ const dislikeCard = (req, res) => card
     if (error.name === 'CastError') {
       res.status(badRequestError).send({ message: `Пользователь не найден: ${error}` });
     } else {
-      res.status(internalServerError).send({ message: `Ошибка сервера: ${error}` });
+      res.status(internalServerError).send({ message: 'Ошибка сервера' });
     }
   });
 
