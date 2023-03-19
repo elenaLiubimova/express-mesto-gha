@@ -4,4 +4,6 @@ const internalServerError = 500;
 const createdStatus = 201;
 const okStatus = 200;
 
-module.exports = { notFoundError, badRequestError, internalServerError, createdStatus, okStatus }
+module.exports = {
+  notFoundError, badRequestError, internalServerError, createdStatus, okStatus,
+};
