@@ -12,7 +12,21 @@ const {
 const login = (req, res) => {
   const { email, password } = req.body;
   return user
-    .findUserByCredentials(email, password)
+    .findOne({ email })
+    .select("+password")
+    .orFail(res.status(unauthorizedError)).send({
+      message: "Ошибка авторизации",
+    })
+    .then((usr) =>
+      bcrypt.compare(password, usr.password).then((matched) => {
+        if (matched) {
+          return usr;
+        }
+        res.status(unauthorizedError).send({
+          message: "Ошибка авторизации",
+        })
+      })
+    )
     .then((usr) => {
       const token = jwt.sign(
         { _id: usr._id },
@@ -121,6 +135,8 @@ const updateAvatar = (req, res) => {
 };
 
 module.exports = {
+  login,
+  createUser,
   getUser,
   getUsers,
   updateUser,
