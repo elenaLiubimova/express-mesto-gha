@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const user = require("../models/user");
 const { NODE_ENV, JWT_SECRET } = process.env;
 const {
@@ -7,6 +8,7 @@ const {
   createdStatus,
   okStatus,
   unauthorizedError,
+  conflictError,
 } = require("../utils/constants");
 
 const login = (req, res) => {
@@ -48,11 +50,22 @@ const login = (req, res) => {
 };
 
 const createUser = (req, res) =>
-  user
-    .create(req.body)
-    .then((usr) => res.status(createdStatus).send(usr))
+  bcrypt.hash(req.body.password, 10)
+  .then(hash => user.create({
+    name: req.body.name,
+    about: req.body.about,
+    avatar: req.body.avatar,
+    email: req.body.email,
+    password: hash,
+  }))
+  .then((usr) => res.status(createdStatus).send(usr))
     .catch((error) => {
-      if (error.name === "ValidationError") {
+      if (err.code === 11000) {
+        res.status(conflictError).send({
+          message: `Пользователь с таким email уже зарегистрирован: ${error}`
+        });
+      }
+      else if (error.name === "ValidationError") {
         res.status(badRequestError).send({
           message: `Переданы некорректные данные при создании пользователя: ${error}`,
         });
