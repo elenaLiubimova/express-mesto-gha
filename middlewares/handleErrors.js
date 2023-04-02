@@ -1,4 +1,4 @@
-const handleErrors = (error, req, res) => {
+const handleErrors = (error, req, res, next) => {
   const { statusCode = 500, message } = error;
 
   res
@@ -8,6 +8,8 @@ const handleErrors = (error, req, res) => {
         ? 'Ошибка сервера'
         : message,
     });
+
+  next();
 };
 
 module.exports = {

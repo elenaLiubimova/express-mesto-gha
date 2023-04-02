@@ -24,8 +24,8 @@ app.post('/signup', createUser);
 app.use(auth);
 
 // роуты, которым авторизация нужна
-app.use('/', require('./routes/users'));
-app.use('/', require('./routes/cards'));
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 app.use('*', (req, res, next) => next(
   res.status(notFoundError).send({ message: 'Страница не найдена' }),

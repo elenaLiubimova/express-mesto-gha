@@ -23,8 +23,8 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => card
   .findById(req.params.cardId)
   .orFail(() => next(new NotFoundError('Карточка не найдена')))
-  .then((usr) => {
-    if (JSON.stringify(req.user._id) !== JSON.stringify(usr.owner)) {
+  .then((crd) => {
+    if (JSON.stringify(req.user._id) !== JSON.stringify(crd.owner)) {
       return next(new ForbiddenError('Отказано в доступе'));
     }
     return card.deleteOne();
