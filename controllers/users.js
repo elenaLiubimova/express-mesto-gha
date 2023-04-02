@@ -22,7 +22,13 @@ const login = (req, res, next) => {
         if (!matched) {
           return Promise.reject(new UnauthorizedError("Ошибка доступа"));
         }
-        return usr;
+        return res.status(createdStatus).send({
+          _id: usr._id,
+          name: usr.name,
+          about: usr.about,
+          avatar: usr.avatar,
+          email: usr.email,
+        });
       })
     )
     .then((usr) => {
@@ -54,6 +60,7 @@ const createUser = (req, res, next) =>
         about: usr.about,
         avatar: usr.avatar,
         email: usr.email,
+        _id: usr._id,
       })
     )
     .catch((error) => {
@@ -72,30 +79,31 @@ const createUser = (req, res, next) =>
       return next(error);
     });
 
-const getUserInfo = (req, res, next, id) =>
-  user
-    .findById(id)
-    .then((usr) => {
-      if (!usr) {
-        return next(new NotFoundError("Пользователь не найден"));
-      }
-      return res.status(okStatus).send({ data: usr });
+getUser = (req, res, next) => {
+  user.findById(req.params.userId)
+    .orFail(() => {
+      return next(new NotFoundError("Пользователь не найден"));
     })
+    .then((usr) => res.send({ data: usr }))
     .catch((error) => {
-      if (error.name === "CastError" || error.name === "ValidationError") {
-        return next(new BadRequestError("Переданы некорректные данные"));
+      if (error.name === "CastError") {
+        return next(new NotFoundError("Пользователь не найден"));
+      } else {
+        next(error);
       }
-      return next(error);
     });
-
-const getUser = (req, res, next) => {
-  const { userId } = req.params;
-  return getUserInfo(res, next, userId);
 };
 
-const getCurrentUser = (req, res, next) => {
-  const { _id } = req.params;
-  return getUserInfo(res, next, _id);
+getCurrentUser = (req, res, next) => {
+  user
+    .findById(req.user._id)
+    .orFail(() => {
+      return next(new NotFoundError("Пользователь не найден"));
+    })
+    .then((usr) => res.send({ data: usr }))
+    .catch((error) => {
+      next(error);
+    });
 };
 
 const getUsers = (req, res, next) =>
