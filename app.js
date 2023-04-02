@@ -23,6 +23,7 @@ app.post('/signin', celebrate({
     password: Joi.string().required(),
   }),
 }), login);
+
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -35,12 +36,9 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-// авторизация
-app.use(auth);
-
 // роуты, которым авторизация нужна
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
+app.use('/users', auth, require('./routes/users'));
+app.use('/cards', auth, require('./routes/cards'));
 
 app.use('*', (req, res, next) => next(
   res.status(notFoundError).send({ message: 'Страница не найдена' }),

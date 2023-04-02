@@ -1,9 +1,9 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const user = require("../models/user");
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { JWT_SECRET } = process.env;
 
-const { createdStatus, okStatus } = require("../utils/constants");
+const { okStatus } = require("../utils/constants");
 const UnauthorizedError = require("../errors/UnauthorizedError");
 const ConflictError = require("../errors/ConflictError");
 const BadRequestError = require("../errors/BadRequestError");
@@ -22,7 +22,7 @@ const login = (req, res, next) => {
         if (!matched) {
           return Promise.reject(new UnauthorizedError("Ошибка доступа"));
         }
-        return res.status(createdStatus).send({
+        return res.status(okStatus).send({
           _id: usr._id,
           name: usr.name,
           about: usr.about,
@@ -32,7 +32,7 @@ const login = (req, res, next) => {
       })
     )
     .then((usr) => {
-      const token = jwt.sign({ _id: usr._id }, JWT_SECRET, {
+      const token = jwt.sign({ _id: usr._id }, 'app-secret', {
         expiresIn: "7d",
       });
       res.send({ jwt: token });
@@ -55,12 +55,12 @@ const createUser = (req, res, next) =>
       })
     )
     .then((usr) =>
-      res.status(createdStatus).send({
+      res.status(okStatus).send({
+        _id: usr._id,
         name: usr.name,
         about: usr.about,
         avatar: usr.avatar,
         email: usr.email,
-        _id: usr._id,
       })
     )
     .catch((error) => {
