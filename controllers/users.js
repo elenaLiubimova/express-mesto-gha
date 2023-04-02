@@ -19,13 +19,7 @@ const login = (req, res, next) => {
       if (!matched) {
         return Promise.reject(new UnauthorizedError('Ошибка доступа'));
       }
-      // return res.status(okStatus).send({
-      //   _id: usr._id,
-      //   name: usr.name,
-      //   about: usr.about,
-      //   avatar: usr.avatar,
-      //   email: usr.email,
-      // });
+      return usr;
     }))
     .then((usr) => {
       const token = jwt.sign({ _id: usr._id }, 'app-secret', {
