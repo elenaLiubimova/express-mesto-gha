@@ -19,13 +19,13 @@ const login = (req, res, next) => {
       if (!matched) {
         return Promise.reject(new UnauthorizedError('Ошибка доступа'));
       }
-      return res.status(okStatus).send({
-        _id: usr._id,
-        name: usr.name,
-        about: usr.about,
-        avatar: usr.avatar,
-        email: usr.email,
-      });
+      // return res.status(okStatus).send({
+      //   _id: usr._id,
+      //   name: usr.name,
+      //   about: usr.about,
+      //   avatar: usr.avatar,
+      //   email: usr.email,
+      // });
     }))
     .then((usr) => {
       const token = jwt.sign({ _id: usr._id }, 'app-secret', {
@@ -84,7 +84,7 @@ const getUser = (req, res, next) => {
 
 const getCurrentUser = (req, res, next) => {
   user
-    .findById(req.usr._id)
+    .findById(req.user._id)
     .orFail(() => next(new NotFoundError('Пользователь не найден')))
     .then((usr) => res.send({ data: usr }))
     .catch((error) => {
