@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
-const { errors } = require('celebrate');
+const { errors, Joi, celebrate } = require('celebrate');
 const { notFoundError } = require('./utils/constants');
 
 const { createUser, login } = require('./controllers/users');
@@ -17,8 +17,23 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 app.use(express.json());
 
 // роуты, не требующие авторизации
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi
+      .string()
+      .pattern(urlPattern),
+  }),
+}), createUser);
 
 // авторизация
 app.use(auth);
