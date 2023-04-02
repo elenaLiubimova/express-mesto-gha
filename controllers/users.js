@@ -70,7 +70,7 @@ const getUser = (req, res, next) => {
     .then((usr) => res.send({ data: usr }))
     .catch((error) => {
       if (error.name === 'CastError') {
-        return next(new NotFoundError('Пользователь не найден'));
+        return next(new BadRequestError('Некорректный id пользователя'));
       }
       return next(error);
     });
