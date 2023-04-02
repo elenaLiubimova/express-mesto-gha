@@ -40,7 +40,7 @@ app.post('/signup', celebrate({
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use('*', (req, res, next) => next(
+app.use((req, res, next) => next(
   res.status(notFoundError).send({ message: 'Страница не найдена' }),
 ));
 

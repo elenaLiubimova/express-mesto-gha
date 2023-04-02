@@ -31,7 +31,7 @@ const login = (req, res, next) => {
       const token = jwt.sign({ _id: usr._id }, 'app-secret', {
         expiresIn: '7d',
       });
-      res.send({ jwt: token });
+      return res.send({ jwt: token });
     })
     .catch((error) => {
       next(error);
@@ -84,7 +84,7 @@ const getUser = (req, res, next) => {
 
 const getCurrentUser = (req, res, next) => {
   user
-    .findById(req.user._id)
+    .findById(req.usr._id)
     .orFail(() => next(new NotFoundError('Пользователь не найден')))
     .then((usr) => res.send({ data: usr }))
     .catch((error) => {
