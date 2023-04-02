@@ -6,8 +6,6 @@ const {
   getUsers,
   updateUser,
   updateAvatar,
-  login,
-  createUser,
 } = require('../controllers/users');
 const { urlPattern } = require('../utils/constants');
 
