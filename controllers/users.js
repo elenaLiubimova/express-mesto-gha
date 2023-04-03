@@ -48,11 +48,11 @@ const createUser = (req, res, next) =>
     )
     .then((usr) =>
       res.status(okStatus).send({
-        _id: usr._id,
         name: usr.name,
         about: usr.about,
         avatar: usr.avatar,
         email: usr.email,
+        _id: usr._id,
       })
     )
     .catch((error) => {
@@ -90,7 +90,7 @@ const getCurrentUser = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError("Пользователь не найден");
     })
-    .then((usr) => res.send({ data: usr }))
+    .then((usr) => res.send(usr))
     .catch((error) => {
       return next(error);
     });

@@ -10,6 +10,7 @@ const {
 const { urlPattern } = require('../utils/constants');
 
 router.get('/', getUsers);
+router.get('/me', getCurrentUser);
 
 router.get('/:userId', celebrate({
   params: Joi.object().keys({
@@ -31,7 +32,5 @@ router.patch('/me/avatar', celebrate({
       .pattern(urlPattern),
   }),
 }), updateAvatar);
-
-router.get('/me', getCurrentUser);
 
 module.exports = router;
