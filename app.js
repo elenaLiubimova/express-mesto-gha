@@ -7,6 +7,7 @@ const { notFoundError, urlPattern } = require('./utils/constants');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { handleErrors } = require('./middlewares/handleErrors');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -40,9 +41,7 @@ app.post('/signup', celebrate({
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use((req, res, next) => next(
-  res.status(notFoundError).send({ message: 'Страница не найдена' }),
-));
+app.use((req, res, next) => next(new NotFoundError('Страница не найдена')));
 
 app.use(errors());
 app.use(handleErrors);

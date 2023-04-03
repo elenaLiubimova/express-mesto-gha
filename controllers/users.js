@@ -66,7 +66,7 @@ const createUser = (req, res, next) => bcrypt
 
 const getUser = (req, res, next) => {
   user.findById(req.params.userId)
-    .orFail(() => next(new NotFoundError('Пользователь не найден')))
+    .orFail(() => next(new BadRequestError('Пользователь не найден')))
     .then((usr) => res.send({ data: usr }))
     .catch((error) => {
       if (error.name === 'CastError') {
