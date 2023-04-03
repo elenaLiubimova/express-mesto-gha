@@ -9,10 +9,10 @@ const {
 } = require('../controllers/cards');
 const { urlPattern } = require('../utils/constants');
 
-router.get('/cards', getCards);
+router.get('/', getCards);
 
 router.post(
-  '/cards',
+  '/',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
@@ -23,7 +23,7 @@ router.post(
 );
 
 router.delete(
-  '/cards/:cardId',
+  '/:cardId',
   celebrate({
     params: Joi.object().keys({
       cardId: Joi.string().alphanum().length(24),
@@ -33,7 +33,7 @@ router.delete(
 );
 
 router.put(
-  '/cards/:cardId/likes',
+  '/:cardId/likes',
   celebrate({
     params: Joi.object().keys({
       cardId: Joi.string().alphanum().length(24),
@@ -43,7 +43,7 @@ router.put(
 );
 
 router.delete(
-  '/cards/:cardId/likes',
+  '/:cardId/likes',
   celebrate({
     params: Joi.object().keys({
       cardId: Joi.string().alphanum().length(24),
