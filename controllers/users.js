@@ -107,7 +107,7 @@ const updateUser = (req, res, next) => {
       return res.status(okStatus).send(usr);
     })
     .catch((error) => {
-      if (error.name === 'CastError' || error.name === 'ValidationError') {
+      if (error.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(error);
@@ -117,7 +117,11 @@ const updateUser = (req, res, next) => {
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   return user
-    .findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+    .findByIdAndUpdate(
+      req.user._id,
+      { avatar },
+      { new: true, runValidators: true },
+    )
     .orFail(() => next(new NotFoundError('Пользователь не найден')))
     .then((usr) => res.send(usr))
     .catch((error) => {

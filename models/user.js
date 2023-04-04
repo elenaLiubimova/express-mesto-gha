@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     default: 'Жак-Ив Кусто',
-    required: true,
     minlength: [2, 'Минимальная длина значения поля - 2 символа, сейчас - {VALUE} символов'],
     maxlength: [30, 'Максимальная длина значения поля - 30 символов, сейчас - {VALUE} символов'],
   },
@@ -14,7 +13,6 @@ const userSchema = new mongoose.Schema({
   about: {
     type: String,
     default: 'Исследователь',
-    required: true,
     minlength: [2, 'Минимальная длина значения поля - 2 символа, сейчас - {VALUE} символов'],
     maxlength: [30, 'Максимальная длина значения поля - 30 символов, сейчас - {VALUE} символов'],
   },
@@ -24,9 +22,8 @@ const userSchema = new mongoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator: (url) => urlPattern.test(url),
-      message: 'email is not valid',
+      message: 'Невалидная ссылка',
     },
-    required: true,
   },
 
   email: {

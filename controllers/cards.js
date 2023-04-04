@@ -3,14 +3,14 @@ const ForbiddenError = require('../errors/ForbiddenError');
 const NotFoundError = require('../errors/NotFoundError');
 const card = require('../models/card');
 const {
-  okStatus,
+  okStatus, createdStatus,
 } = require('../utils/constants');
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   return card
     .create({ name, link, owner: req.user._id })
-    .then((crd) => res.send({ data: crd }))
+    .then((crd) => res.status(createdStatus).send({ data: crd }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные при создании карточки'));
@@ -40,8 +40,9 @@ const deleteCard = (req, res, next) => card
 
 const getCards = (req, res, next) => card
   .find({})
+  .populate(['owner', 'likes'])
   .then((crds) => res.status(okStatus).send(crds))
-  .catch(() => next(new BadRequestError('Некорректные данные')));
+  .catch((error) => next(error));
 
 const likeCard = (req, res, next) => card
   .findByIdAndUpdate(
